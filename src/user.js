@@ -1,8 +1,21 @@
-//Function to save user in the database we're going to save his firstname and lastname, email
+const User = require('./models/User');
+const database = require('./database'); // Simulated database module
+
 function saveUser(user) {
-    console.log(`Saving user: ${user.firstName} ${user.lastName}, email: ${user.email}`);
-    // Simulate saving to a database
-    return true;
+    if (!user.firstName || !user.lastName || !user.email) {
+        throw new Error('Invalid input fields');
+    }
+
+    if (database.isEmailUsed(user.email)) {
+        throw new Error('Email already used');
+    }
+
+    try {
+        database.save(user);
+        return true;
+    } catch (error) {
+        throw new Error('Database error');
+    }
 }
 
 module.exports = { saveUser };
