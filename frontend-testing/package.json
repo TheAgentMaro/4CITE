@@ -1,0 +1,13 @@
+{
+  "name": "frontend-testing",
+  "version": "1.0.0",
+  "description": "frontend test",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "marwen",
+  "license": "ISC",
+  "dependencies": {
+    "frontend-testing": "file:"
+  }
+}

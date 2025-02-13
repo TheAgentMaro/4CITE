@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react';
-import Button from './Button';
+import Button from '../components/Button';
 
 test('affiche le contenu du bouton et appelle la fonction au clic', () => {
   const handleClick = jest.fn();
