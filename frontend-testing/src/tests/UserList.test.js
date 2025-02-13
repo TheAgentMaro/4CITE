@@ -1,6 +1,7 @@
 import React from 'react';
 import { render } from '@testing-library/react';
-import UserList from './UserList';
+import '@testing-library/jest-dom'; // Ajout de l'importation
+import UserList from '../components/UserList.js';
 
 const users = [
   { id: 1, name: 'Alice', email: 'alice@example.com' },

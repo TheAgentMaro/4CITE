@@ -1,5 +1,6 @@
-// src/tests/Button.test.js
+import React from 'react'; // Ajout de l'importation de React
 import { render, screen, fireEvent } from '@testing-library/react';
+import '@testing-library/jest-dom'; // Ajout de l'importation
 import Button from '../components/Button';
 
 test('Le bouton affiche le bon texte', () => {

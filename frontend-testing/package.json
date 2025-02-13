@@ -9,5 +9,11 @@
   "license": "ISC",
   "dependencies": {
     "frontend-testing": "file:"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.26.8",
+    "@babel/preset-react": "^7.26.3",
+    "babel-jest": "^29.7.0",
+    "jest-environment-jsdom": "^28.1.3"
   }
 }

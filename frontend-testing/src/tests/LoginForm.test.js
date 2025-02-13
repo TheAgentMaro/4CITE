@@ -1,4 +1,4 @@
-// src/tests/LoginForm.test.js
+import React from 'react'; // Ajout de l'importation de React
 import { render, screen, fireEvent } from '@testing-library/react';
 import LoginForm from '../components/LoginForm';
 
