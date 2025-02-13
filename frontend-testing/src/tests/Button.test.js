@@ -1,14 +1,15 @@
-import React from 'react';
-import { render, fireEvent } from '@testing-library/react';
+// src/tests/Button.test.js
+import { render, screen, fireEvent } from '@testing-library/react';
 import Button from '../components/Button';
 
-test('affiche le contenu du bouton et appelle la fonction au clic', () => {
-  const handleClick = jest.fn();
-  const { getByText } = render(<Button onClick={handleClick}>Cliquez-moi</Button>);
-  
-  const buttonElement = getByText(/Cliquez-moi/i);
-  expect(buttonElement).toBeInTheDocument();
-  
-  fireEvent.click(buttonElement);
-  expect(handleClick).toHaveBeenCalledTimes(1);
+test('Le bouton affiche le bon texte', () => {
+    render(<Button label="Clique moi" />);
+    expect(screen.getByText('Clique moi')).toBeInTheDocument();
+});
+
+test('Le bouton déclenche bien un événement au clic', () => {
+    const handleClick = jest.fn();
+    render(<Button label="Clique moi" onClick={handleClick} />);
+    fireEvent.click(screen.getByText('Clique moi'));
+    expect(handleClick).toHaveBeenCalledTimes(1);
 });
