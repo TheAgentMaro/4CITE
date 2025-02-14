@@ -42,6 +42,8 @@ Ce projet démontre l'implémentation de tests frontend et backend avec une int�
 
 ### Tests Unitaires Backend
 ```bash
+cd backend-testing
+
 # Exécuter tous les tests backend
 npm test
 
@@ -55,13 +57,11 @@ npm run test:watch
 ### Tests Frontend
 ```bash
 # Dans le dossier client
-cd client
+cd frontend-testing
 
 # Exécuter tous les tests frontend
 npm test
 
-# Exécuter les tests avec couverture
-npm run test:coverage
 ```
 
 ### Tests E2E avec Cypress
@@ -88,14 +88,6 @@ Le workflow est déclenché sur :
 - Pull requests vers main
 - Tags (pour les releases)
 
-## Couverture des Tests
-
-Nous maintenons une couverture de tests minimale de :
-- Backend : 80%
-- Frontend : 75%
-- E2E : Scénarios critiques couverts
-
-Les rapports de couverture sont générés automatiquement dans le pipeline CI/CD.
 
 ## Bonnes Pratiques
 
@@ -111,11 +103,6 @@ Les rapports de couverture sont générés automatiquement dans le pipeline CI/C
 - Mock des dépendances externes
 - Validation des schémas de données
 
-## Documentation API
-
-La documentation de l'API est disponible sur :
-- Development : http://localhost:3000/api-docs
-- Production : https://api.votredomaine.com/api-docs
 
 ## Contribution
 
