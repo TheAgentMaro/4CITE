@@ -26,35 +26,16 @@ export function ShopPage() {
   }, [navigate]);
 
   const addToCart = (product) => {
-    setCart(prevCart => {
-      const existingItem = prevCart.find(item => item.id === product.id);
-      if (existingItem) {
-        return prevCart.map(item =>
-          item.id === product.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-      }
-      return [...prevCart, { ...product, quantity: 1 }];
-    });
+    // Ajouter le produit comme un nouvel élément distinct
+    setCart(prevCart => [...prevCart, { ...product, cartId: Date.now() }]);
   };
 
-  const removeFromCart = (productId) => {
-    setCart(prevCart => {
-      const existingItem = prevCart.find(item => item.id === productId);
-      if (existingItem.quantity === 1) {
-        return prevCart.filter(item => item.id !== productId);
-      }
-      return prevCart.map(item =>
-        item.id === productId
-          ? { ...item, quantity: item.quantity - 1 }
-          : item
-      );
-    });
+  const removeFromCart = (cartId) => {
+    setCart(prevCart => prevCart.filter(item => item.cartId !== cartId));
   };
 
   const calculateTotal = () => {
-    return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+    return cart.reduce((total, item) => total + item.price, 0);
   };
 
   const handleCheckout = () => {
@@ -62,14 +43,38 @@ export function ShopPage() {
       alert('Your cart is empty!');
       return;
     }
-    // Sauvegarder le panier dans le localStorage pour la page de paiement
-    localStorage.setItem('cart', JSON.stringify(cart));
+    // Préparer les données du panier pour le checkout
+    const checkoutCart = cart.reduce((acc, item) => {
+      const existingItem = acc.find(i => i.id === item.id);
+      if (existingItem) {
+        existingItem.quantity += 1;
+      } else {
+        acc.push({ ...item, quantity: 1 });
+      }
+      return acc;
+    }, []);
+
+    localStorage.setItem('cart', JSON.stringify(checkoutCart));
     navigate('/checkout');
   };
 
   if (!user) {
     return <div>Loading...</div>;
   }
+
+  // Grouper les articles pour l'affichage
+  const groupedCartItems = cart.reduce((acc, item) => {
+    const existingItem = acc.find(i => i.id === item.id);
+    if (existingItem) {
+      existingItem.instances.push(item.cartId);
+    } else {
+      acc.push({
+        ...item,
+        instances: [item.cartId]
+      });
+    }
+    return acc;
+  }, []);
 
   return (
     <div className="shop-container" data-testid="shop-page">
@@ -108,16 +113,14 @@ export function ShopPage() {
             <>
               <ul className="cart-items">
                 {cart.map(item => (
-                  <li key={item.id} data-testid={`cart-item-${item.id}`} className="cart-item">
+                  <li key={item.cartId} data-testid={`cart-item-${item.id}`} className="cart-item">
                     <img src={item.image} alt={item.name} />
                     <div className="item-details">
                       <h4>{item.name}</h4>
-                      <p>${item.price} x {item.quantity}</p>
+                      <p>${item.price}</p>
                     </div>
                     <div className="item-actions">
-                      <button onClick={() => removeFromCart(item.id)}>-</button>
-                      <span>{item.quantity}</span>
-                      <button onClick={() => addToCart(item)}>+</button>
+                      <button onClick={() => removeFromCart(item.cartId)}>Remove</button>
                     </div>
                   </li>
                 ))}
