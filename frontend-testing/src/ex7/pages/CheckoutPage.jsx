@@ -26,18 +26,16 @@ export function CheckoutPage() {
   }, [navigate]);
 
   const calculateTotal = () => {
-    return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
+    return cart.reduce((total, item) => total + item.price, 0);
   };
 
   const validateCard = (number) => {
-    // Algorithme de Luhn simplifié pour la validation de carte
     const digits = number.replace(/\D/g, '');
     if (digits.length !== 16) return false;
     
     let sum = 0;
     let isEven = false;
     
-    // Parcourir de droite à gauche
     for (let i = digits.length - 1; i >= 0; i--) {
       let digit = parseInt(digits[i], 10);
       
@@ -58,14 +56,12 @@ export function CheckoutPage() {
   const validateForm = () => {
     const newErrors = {};
     
-    // Validation du numéro de carte
     if (!paymentInfo.cardNumber) {
       newErrors.cardNumber = 'Card number is required';
     } else if (!validateCard(paymentInfo.cardNumber)) {
       newErrors.cardNumber = 'Invalid card number';
     }
 
-    // Validation de la date d'expiration
     if (!paymentInfo.expiryDate) {
       newErrors.expiryDate = 'Expiry date is required';
     } else {
@@ -77,14 +73,12 @@ export function CheckoutPage() {
       }
     }
 
-    // Validation du CVV
     if (!paymentInfo.cvv) {
       newErrors.cvv = 'CVV is required';
     } else if (!/^\d{3}$/.test(paymentInfo.cvv)) {
       newErrors.cvv = 'CVV must be 3 digits';
     }
 
-    // Validation du nom
     if (!paymentInfo.name) {
       newErrors.name = 'Name is required';
     }
@@ -96,18 +90,15 @@ export function CheckoutPage() {
     const { name, value } = e.target;
     let formattedValue = value;
 
-    // Formatage du numéro de carte
     if (name === 'cardNumber') {
       formattedValue = value.replace(/\D/g, '').slice(0, 16);
     }
-    // Formatage de la date d'expiration
     else if (name === 'expiryDate') {
       formattedValue = value
         .replace(/\D/g, '')
         .slice(0, 4)
         .replace(/(\d{2})(\d{2})/, '$1/$2');
     }
-    // Formatage du CVV
     else if (name === 'cvv') {
       formattedValue = value.replace(/\D/g, '').slice(0, 3);
     }
@@ -117,7 +108,6 @@ export function CheckoutPage() {
       [name]: formattedValue
     }));
 
-    // Effacer l'erreur lors de la saisie
     if (errors[name]) {
       setErrors(prev => ({
         ...prev,
@@ -131,11 +121,8 @@ export function CheckoutPage() {
     const newErrors = validateForm();
 
     if (Object.keys(newErrors).length === 0) {
-      // Simuler le traitement du paiement
       setTimeout(() => {
-        // Nettoyer le panier
         localStorage.removeItem('cart');
-        // Rediriger vers une page de confirmation
         navigate('/confirmation');
       }, 1000);
     } else {
@@ -154,12 +141,11 @@ export function CheckoutPage() {
           <h2>Order Summary</h2>
           <div className="order-items">
             {cart.map(item => (
-              <div key={item.id} className="order-item" data-testid={`checkout-item-${item.id}`}>
+              <div key={item.cartId} className="order-item" data-testid={`checkout-item-${item.id}`}>
                 <img src={item.image} alt={item.name} />
                 <div className="item-info">
                   <h3>{item.name}</h3>
-                  <p>Quantity: {item.quantity}</p>
-                  <p className="item-price">${item.price * item.quantity}</p>
+                  <p className="item-price">${item.price}</p>
                 </div>
               </div>
             ))}
@@ -181,6 +167,8 @@ export function CheckoutPage() {
                 value={paymentInfo.name}
                 onChange={handleInputChange}
                 className={errors.name ? 'error' : ''}
+                data-testid="card-name"
+                placeholder="John Doe"
               />
               {errors.name && <span className="error-message">{errors.name}</span>}
             </div>

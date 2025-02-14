@@ -43,18 +43,9 @@ export function ShopPage() {
       alert('Your cart is empty!');
       return;
     }
-    // Préparer les données du panier pour le checkout
-    const checkoutCart = cart.reduce((acc, item) => {
-      const existingItem = acc.find(i => i.id === item.id);
-      if (existingItem) {
-        existingItem.quantity += 1;
-      } else {
-        acc.push({ ...item, quantity: 1 });
-      }
-      return acc;
-    }, []);
 
-    localStorage.setItem('cart', JSON.stringify(checkoutCart));
+    // Sauvegarder directement les articles individuels
+    localStorage.setItem('cart', JSON.stringify(cart));
     navigate('/checkout');
   };
 
