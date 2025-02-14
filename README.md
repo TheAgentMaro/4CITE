@@ -1,7 +1,19 @@
-# 4CITE
+# 4CITE - Test Frontend/Backend & CI/CD
 
 ## Description
-Ce projet est un exemple de test frontend et backend avec CI/CD et pipeline.
+Ce projet démontre l'implémentation de tests frontend et backend avec une intégration continue (CI) et un déploiement continu (CD) automatisé. Il sert d'exemple pour les bonnes pratiques de test et d'automatisation dans le développement moderne.
+
+## Technologies Utilisées
+- **Frontend**: React.js avec Jest et React Testing Library
+- **Backend**: Node.js/Express avec Jest
+- **Base de données**: MongoDB
+- **CI/CD**: GitHub Actions
+- **Tests E2E**: Cypress
+
+## Prérequis
+- Node.js (v14 ou supérieur)
+- npm (v6 ou supérieur)
+- MongoDB (v4.4 ou supérieur)
 
 ## Installation
 1. Clonez le dépôt :
@@ -12,268 +24,107 @@ Ce projet est un exemple de test frontend et backend avec CI/CD et pipeline.
 
 2. Installez les dépendances :
     ```bash
+    # Installation des dépendances backend
+    npm install
+    
+    # Installation des dépendances frontend
+    cd client
     npm install
     ```
 
-## Exécution des tests
-Pour exécuter les tests, utilisez la commande suivante :
+3. Configurez les variables d'environnement :
+    ```bash
+    cp .env.example .env
+    # Modifiez les variables dans .env selon votre configuration
+    ```
+
+## Tests
+
+### Tests Unitaires Backend
 ```bash
+# Exécuter tous les tests backend
 npm test
+
+# Exécuter les tests avec couverture
+npm run test:coverage
+
+# Exécuter les tests en mode watch
+npm run test:watch
 ```
 
-## Exemple de code
-### Modèle d'utilisateur
-```javascript
-// filepath: /c:/Users/marwe/Desktop/M1Supinfo/4CITE/src/models/User.js
-class User {
-    constructor(firstName, lastName, email) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-    }
-}
+### Tests Frontend
+```bash
+# Dans le dossier client
+cd client
 
-module.exports = User;
+# Exécuter tous les tests frontend
+npm test
+
+# Exécuter les tests avec couverture
+npm run test:coverage
 ```
 
-### Fonction pour enregistrer un utilisateur
-```javascript
-// filepath: /c:/Users/marwe/Desktop/M1Supinfo/4CITE/src/user.js
-const User = require('./models/User');
-const database = require('./database'); // Simulated database module
+### Tests E2E avec Cypress
+```bash
+# Démarrer les tests E2E en mode headless
+npm run cypress:run
 
-function saveUser(user) {
-    if (!user.firstName || !user.lastName || !user.email) {
-        throw new Error('Invalid input fields');
-    }
-
-    if (database.isEmailUsed(user.email)) {
-        throw new Error('Email already used');
-    }
-
-    try {
-        database.save(user);
-        return true;
-    } catch (error) {
-        throw new Error('Database error');
-    }
-}
-
-module.exports = { saveUser };
+# Ouvrir l'interface Cypress
+npm run cypress:open
 ```
 
-### Tests pour la fonction saveUser
-```javascript
-// filepath: /c:/Users/marwe/Desktop/M1Supinfo/4CITE/tests/user.test.js
-const User = require('../src/models/User');
-const { saveUser } = require('../src/user');
-const database = require('../src/database');
+## Pipeline CI/CD
 
-jest.mock('../src/database');
+Notre pipeline CI/CD utilise GitHub Actions et comprend les étapes suivantes :
 
-describe('saveUser function', () => {
-    beforeEach(() => {
-        jest.clearAllMocks();
-    });
+1. **Lint et Format** : Vérifie le style du code
+2. **Tests Unitaires** : Exécute les tests backend et frontend
+3. **Tests E2E** : Lance les tests Cypress
+4. **Build** : Compile l'application
+5. **Deploy** : Déploie sur l'environnement approprié
 
-    test('should save a user to the database with valid input fields', () => {
-        const user = new User('John', 'Doe', 'john@supinfo.com');
-        database.isEmailUsed.mockReturnValue(false);
-        database.save.mockImplementation(() => true);
+Le workflow est déclenché sur :
+- Push sur main
+- Pull requests vers main
+- Tags (pour les releases)
 
-        const result = saveUser(user);
-        expect(result).toBe(true);
-    });
+## Couverture des Tests
 
-    test('should throw an error if input fields are invalid', () => {
-        const user = new User('', 'Doe', 'john@supinfo.com');
+Nous maintenons une couverture de tests minimale de :
+- Backend : 80%
+- Frontend : 75%
+- E2E : Scénarios critiques couverts
 
-        expect(() => saveUser(user)).toThrow('Invalid input fields');
-    });
+Les rapports de couverture sont générés automatiquement dans le pipeline CI/CD.
 
-    test('should throw an error if email is already used', () => {
-        const user = new User('John', 'Doe', 'john@supinfo.com');
-        database.isEmailUsed.mockReturnValue(true);
+## Bonnes Pratiques
 
-        expect(() => saveUser(user)).toThrow('Email already used');
-    });
+### Tests Frontend
+- Tests des composants isolés
+- Tests d'intégration des pages
+- Mock des appels API
+- Test des événements utilisateur
 
-    test('should throw an error if database is down', () => {
-        const user = new User('John', 'Doe', 'john@supinfo.com');
-        database.isEmailUsed.mockReturnValue(false);
-        database.save.mockImplementation(() => {
-            throw new Error('Database error');
-        });
+### Tests Backend
+- Tests unitaires des services
+- Tests d'intégration des API
+- Mock des dépendances externes
+- Validation des schémas de données
 
-        expect(() => saveUser(user)).toThrow('Database error');
-    });
+## Documentation API
 
-    test('should handle network lag or down', () => {
-        const user = new User('John', 'Doe', 'john@supinfo.com');
-        database.isEmailUsed.mockReturnValue(false);
-        database.save.mockImplementation(() => {
-            throw new Error('Database error');
-        });
+La documentation de l'API est disponible sur :
+- Development : http://localhost:3000/api-docs
+- Production : https://api.votredomaine.com/api-docs
 
-        expect(() => saveUser(user)).toThrow('Database error');
-    });
-});
-```
+## Contribution
 
-## Simulated Database Module
-```javascript
-// filepath: /c:/Users/marwe/Desktop/M1Supinfo/4CITE/src/database.js
-const database = {
-    isEmailUsed: (email) => {
-        // Simulate checking if email is used
-        return false;
-    },
-    save: (user) => {
-        // Simulate saving user to database
-        console.log(`User ${user.firstName} ${user.lastName} saved to database.`);
-        return true;
-    }
-};
+1. Fork le projet
+2. Créez votre branche (`git checkout -b feature/AmazingFeature`)
+3. Committez vos changements (`git commit -m 'Add some AmazingFeature'`)
+4. Push vers la branche (`git push origin feature/AmazingFeature`)
+5. Ouvrez une Pull Request
 
-module.exports = database;
-```
+## Licence
 
-## Exercices de test backend
-
-### Exercice 10: Créer un endpoint REST basique
-Créez un endpoint REST basique qui gère une requête simple et retourne un objet simple.
-
-#### Code
-```javascript
-// filepath: /c:/Users/marwe/Desktop/M1Supinfo/4CITE/src/server.js
-const express = require('express');
-const app = express();
-const port = 3000;
-
-app.get('/api/hello', (req, res) => {
-    res.status(200).json({ message: 'Hello, world!' });
-});
-
-app.listen(port, () => {
-    console.log(`Server running at http://localhost:${port}/`);
-});
-
-module.exports = app;
-```
-
-#### Test
-```javascript
-// filepath: /c:/Users/marwe/Desktop/M1Supinfo/4CITE/tests/server.test.js
-const request = require('supertest');
-const app = require('../src/server');
-
-describe('GET /api/hello', () => {
-    it('should return a 200 status code and a message', async () => {
-        const response = await request(app).get('/api/hello');
-        expect(response.status).toBe(200);
-        expect(response.body).toEqual({ message: 'Hello, world!' });
-        expect(response.headers['content-type']).toMatch(/json/);
-    });
-});
-```
-
-### Exercice 11: Endpoint pour enregistrer un utilisateur
-Créez un endpoint qui permet d'enregistrer un utilisateur dans une base de données et testez deux cas d'utilisation.
-
-#### Code
-```javascript
-// filepath: /c:/Users/marwe/Desktop/M1Supinfo/4CITE/src/server.js
-// ...existing code...
-const { saveUser } = require('./user');
-
-app.post('/api/register', (req, res) => {
-    const user = new User(req.body.firstName, req.body.lastName, req.body.email);
-    try {
-        saveUser(user);
-        res.status(201).json({ message: 'User registered successfully' });
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-});
-```
-
-#### Test
-```javascript
-// filepath: /c:/Users/marwe/Desktop/M1Supinfo/4CITE/tests/server.test.js
-// ...existing code...
-
-describe('POST /api/register', () => {
-    beforeEach(() => {
-        jest.clearAllMocks();
-    });
-
-    it('should register a user with valid input', async () => {
-        const user = { firstName: 'John', lastName: 'Doe', email: 'john@supinfo.com' };
-        database.isEmailUsed.mockReturnValue(false);
-        database.save.mockImplementation(() => true);
-
-        const response = await request(app).post('/api/register').send(user);
-        expect(response.status).toBe(201);
-        expect(response.body).toEqual({ message: 'User registered successfully' });
-    });
-
-    it('should return an error if the user already exists', async () => {
-        const user = { firstName: 'John', lastName: 'Doe', email: 'john@supinfo.com' };
-        database.isEmailUsed.mockReturnValue(true);
-
-        const response = await request(app).post('/api/register').send(user);
-        expect(response.status).toBe(400);
-        expect(response.body).toEqual({ error: 'Email already used' });
-    });
-});
-```
-
-### Exercice 12: Implémenter une solution de test plus complexe
-Utilisez l'une de vos applications ou projets pour implémenter une solution de test plus complexe.
-
-### Exercice 13: Utiliser proxyquire pour remplacer un import
-Utilisez proxyquire pour remplacer complètement un import vers un autre module et surcharger une fonction basique.
-
-#### Code
-```javascript
-// filepath: /c:/Users/marwe/Desktop/M1Supinfo/4CITE/src/user.js
-const proxyquire = require('proxyquire');
-
-const databaseStub = {
-    isEmailUsed: (email) => false,
-    save: (user) => true
-};
-
-const { saveUser } = proxyquire('./user', { './database': databaseStub });
-
-module.exports = { saveUser };
-```
-
-#### Test
-```javascript
-// filepath: /c:/Users/marwe/Desktop/M1Supinfo/4CITE/tests/user.test.js
-const proxyquire = require('proxyquire');
-const User = require('../src/models/User');
-
-const databaseStub = {
-    isEmailUsed: jest.fn(),
-    save: jest.fn()
-};
-
-const { saveUser } = proxyquire('../src/user', { '../src/database': databaseStub });
-
-describe('saveUser function with proxyquire', () => {
-    beforeEach(() => {
-        jest.clearAllMocks();
-    });
-
-    test('should save a user to the database with valid input fields', () => {
-        const user = new User('John', 'Doe', 'john@supinfo.com');
-        databaseStub.isEmailUsed.mockReturnValue(false);
-        databaseStub.save.mockImplementation(() => true);
-
-        const result = saveUser(user);
-        expect(result).toBe(true);
-    });
-});
-```
+Ce projet est sous licence MIT. Voir le fichier `LICENSE` pour plus de détails.
