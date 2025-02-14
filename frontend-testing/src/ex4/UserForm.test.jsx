@@ -25,8 +25,13 @@ describe('UserForm', () => {
 
   it('should show error for invalid email', () => {
     const emailInput = screen.getByTestId('email-input');
-    fireEvent.change(emailInput, { target: { value: 'invalid-email' } });
-    fireEvent.click(screen.getByTestId('submit-button'));
+    fireEvent.change(emailInput, { target: { name: 'email', value: 'invalid-email' } });
+    
+    // Soumettre le formulaire pour déclencher la validation
+    const submitButton = screen.getByTestId('submit-button');
+    fireEvent.click(submitButton);
+    
+    // Maintenant vérifier l'erreur
     expect(screen.getByTestId('email-error')).toHaveTextContent('Email is invalid');
   });
 

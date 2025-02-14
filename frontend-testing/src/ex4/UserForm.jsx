@@ -7,36 +7,24 @@ export const UserForm = ({ onSubmit }) => {
     age: '',
   });
   const [errors, setErrors] = useState({});
+  const [touched, setTouched] = useState({});
 
-  const validateForm = () => {
-    const newErrors = {};
-    
-    if (!formData.username.trim()) {
-      newErrors.username = 'Username is required';
-    } else if (formData.username.length < 3) {
-      newErrors.username = 'Username must be at least 3 characters';
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = 'Email is invalid';
-    }
-
-    if (!formData.age.trim()) {
-      newErrors.age = 'Age is required';
-    } else if (isNaN(formData.age) || parseInt(formData.age) < 18) {
-      newErrors.age = 'Age must be at least 18';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validateForm()) {
-      onSubmit(formData);
+  const validateField = (name, value) => {
+    switch (name) {
+      case 'username':
+        if (!value.trim()) return 'Username is required';
+        if (value.length < 3) return 'Username must be at least 3 characters';
+        return '';
+      case 'email':
+        if (!value.trim()) return 'Email is required';
+        if (!/\S+@\S+\.\S+/.test(value)) return 'Email is invalid';
+        return '';
+      case 'age':
+        if (!value.trim()) return 'Age is required';
+        if (isNaN(value) || parseInt(value) < 18) return 'Age must be at least 18';
+        return '';
+      default:
+        return '';
     }
   };
 
@@ -46,6 +34,42 @@ export const UserForm = ({ onSubmit }) => {
       ...prev,
       [name]: value
     }));
+    
+    // Valider le champ immédiatement après modification
+    const error = validateField(name, value);
+    setErrors(prev => ({
+      ...prev,
+      [name]: error
+    }));
+    
+    setTouched(prev => ({
+      ...prev,
+      [name]: true
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    
+    // Valider tous les champs
+    const newErrors = {};
+    Object.keys(formData).forEach(field => {
+      const error = validateField(field, formData[field]);
+      if (error) {
+        newErrors[field] = error;
+      }
+    });
+    
+    setErrors(newErrors);
+    setTouched({
+      username: true,
+      email: true,
+      age: true
+    });
+
+    if (Object.keys(newErrors).length === 0) {
+      onSubmit(formData);
+    }
   };
 
   return (
@@ -60,7 +84,9 @@ export const UserForm = ({ onSubmit }) => {
           onChange={handleChange}
           data-testid="username-input"
         />
-        {errors.username && <span className="error" data-testid="username-error">{errors.username}</span>}
+        {touched.username && errors.username && (
+          <span className="error" data-testid="username-error">{errors.username}</span>
+        )}
       </div>
 
       <div>
@@ -73,7 +99,9 @@ export const UserForm = ({ onSubmit }) => {
           onChange={handleChange}
           data-testid="email-input"
         />
-        {errors.email && <span className="error" data-testid="email-error">{errors.email}</span>}
+        {(touched.email || errors.email) && (
+          <span className="error" data-testid="email-error">{errors.email}</span>
+        )}
       </div>
 
       <div>
@@ -86,7 +114,9 @@ export const UserForm = ({ onSubmit }) => {
           onChange={handleChange}
           data-testid="age-input"
         />
-        {errors.age && <span className="error" data-testid="age-error">{errors.age}</span>}
+        {touched.age && errors.age && (
+          <span className="error" data-testid="age-error">{errors.age}</span>
+        )}
       </div>
 
       <button type="submit" data-testid="submit-button">Submit</button>
