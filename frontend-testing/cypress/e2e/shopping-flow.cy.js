@@ -50,6 +50,7 @@ describe('E2E Shopping Flow', () => {
 
     // 4. Fill payment details
     cy.get('[data-testid=checkout-page]', { timeout: 10000 }).should('be.visible');
+    cy.get('[data-testid=card-name]').type('John Doe');
     cy.get('[data-testid=card-number]').type('4111111111111111');
     cy.get('[data-testid=expiry-date]').type('12/25');
     cy.get('[data-testid=cvv]').type('123');

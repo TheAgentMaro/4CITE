@@ -121,12 +121,33 @@ export function CheckoutPage() {
     const newErrors = validateForm();
 
     if (Object.keys(newErrors).length === 0) {
+      // Désactiver le bouton pendant le traitement
+      const submitButton = document.querySelector('[data-testid="submit-payment"]');
+      if (submitButton) {
+        submitButton.disabled = true;
+      }
+
+      // Simuler le traitement du paiement
       setTimeout(() => {
-        localStorage.removeItem('cart');
-        navigate('/confirmation');
-      }, 1000);
+        try {
+          localStorage.removeItem('cart');
+          navigate('/confirmation');
+        } catch (error) {
+          console.error('Navigation error:', error);
+          // Réactiver le bouton en cas d'erreur
+          if (submitButton) {
+            submitButton.disabled = false;
+          }
+        }
+      }, 500); // Réduire le délai pour les tests
     } else {
       setErrors(newErrors);
+      // Mettre le focus sur le premier champ avec une erreur
+      const firstErrorField = Object.keys(newErrors)[0];
+      const element = document.querySelector(`[name="${firstErrorField}"]`);
+      if (element) {
+        element.focus();
+      }
     }
   };
 
