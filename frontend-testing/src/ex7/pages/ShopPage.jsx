@@ -1,73 +1,143 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import '../styles/ShopPage.css';
 
-const products = [
-  { id: 1, name: 'Product 1', price: 10 },
-  { id: 2, name: 'Product 2', price: 20 },
-  { id: 3, name: 'Product 3', price: 30 },
+// Produits de démonstration
+const PRODUCTS = [
+  { id: 1, name: 'Basic T-Shirt', price: 10, image: 'https://via.placeholder.com/150?text=T-Shirt' },
+  { id: 2, name: 'Premium Jeans', price: 20, image: 'https://via.placeholder.com/150?text=Jeans' },
+  { id: 3, name: 'Casual Shoes', price: 30, image: 'https://via.placeholder.com/150?text=Shoes' },
+  { id: 4, name: 'Classic Watch', price: 40, image: 'https://via.placeholder.com/150?text=Watch' }
 ];
 
-export const ShopPage = () => {
+export function ShopPage() {
+  const navigate = useNavigate();
   const [cart, setCart] = useState([]);
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const savedCart = localStorage.getItem('cart');
-    if (savedCart) {
-      setCart(JSON.parse(savedCart));
+    // Vérifier si l'utilisateur est connecté
+    const userData = localStorage.getItem('user');
+    if (!userData) {
+      navigate('/register');
+      return;
     }
-  }, []);
+    setUser(JSON.parse(userData));
+  }, [navigate]);
 
   const addToCart = (product) => {
-    const newCart = [...cart, product];
-    setCart(newCart);
-    localStorage.setItem('cart', JSON.stringify(newCart));
+    setCart(prevCart => {
+      const existingItem = prevCart.find(item => item.id === product.id);
+      if (existingItem) {
+        return prevCart.map(item =>
+          item.id === product.id
+            ? { ...item, quantity: item.quantity + 1 }
+            : item
+        );
+      }
+      return [...prevCart, { ...product, quantity: 1 }];
+    });
   };
 
-  const getTotalPrice = () => {
-    return cart.reduce((total, item) => total + item.price, 0);
+  const removeFromCart = (productId) => {
+    setCart(prevCart => {
+      const existingItem = prevCart.find(item => item.id === productId);
+      if (existingItem.quantity === 1) {
+        return prevCart.filter(item => item.id !== productId);
+      }
+      return prevCart.map(item =>
+        item.id === productId
+          ? { ...item, quantity: item.quantity - 1 }
+          : item
+      );
+    });
+  };
+
+  const calculateTotal = () => {
+    return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
   };
 
   const handleCheckout = () => {
-    if (cart.length === 0) return;
-    window.location.href = '/checkout';
+    if (cart.length === 0) {
+      alert('Your cart is empty!');
+      return;
+    }
+    // Sauvegarder le panier dans le localStorage pour la page de paiement
+    localStorage.setItem('cart', JSON.stringify(cart));
+    navigate('/checkout');
   };
 
-  return (
-    <div data-testid="shop-page">
-      <h2>Shop</h2>
-      <div className="products" data-testid="products-list">
-        {products.map(product => (
-          <div key={product.id} className="product" data-testid={`product-${product.id}`}>
-            <h3>{product.name}</h3>
-            <p>${product.price}</p>
-            <button
-              onClick={() => addToCart(product)}
-              data-testid={`add-to-cart-${product.id}`}
-            >
-              Add to Cart
-            </button>
-          </div>
-        ))}
-      </div>
+  if (!user) {
+    return <div>Loading...</div>;
+  }
 
-      <div className="cart" data-testid="cart">
-        <h3>Cart</h3>
-        {cart.map((item, index) => (
-          <div key={index} data-testid={`cart-item-${item.id}`}>
-            <span>{item.name}</span>
-            <span>${item.price}</span>
-          </div>
-        ))}
-        <div className="total" data-testid="cart-total">
-          Total: ${getTotalPrice()}
+  return (
+    <div className="shop-container" data-testid="shop-page">
+      <header className="shop-header">
+        <h1>Welcome to our Shop, {user.firstName}!</h1>
+        <div className="user-info">
+          <span>{user.email}</span>
         </div>
-        <button
-          onClick={handleCheckout}
-          data-testid="checkout-button"
-          disabled={cart.length === 0}
-        >
-          Proceed to Checkout
-        </button>
-      </div>
+      </header>
+
+      <main className="shop-content">
+        <section className="products-section">
+          <h2>Our Products</h2>
+          <div className="products-grid">
+            {PRODUCTS.map(product => (
+              <div key={product.id} className="product-card">
+                <img src={product.image} alt={product.name} />
+                <h3>{product.name}</h3>
+                <p className="price">${product.price}</p>
+                <button
+                  onClick={() => addToCart(product)}
+                  data-testid={`add-to-cart-${product.id}`}
+                >
+                  Add to Cart
+                </button>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <aside className="cart-section" data-testid="cart">
+          <h2>Shopping Cart</h2>
+          {cart.length === 0 ? (
+            <p>Your cart is empty</p>
+          ) : (
+            <>
+              <ul className="cart-items">
+                {cart.map(item => (
+                  <li key={item.id} data-testid={`cart-item-${item.id}`} className="cart-item">
+                    <img src={item.image} alt={item.name} />
+                    <div className="item-details">
+                      <h4>{item.name}</h4>
+                      <p>${item.price} x {item.quantity}</p>
+                    </div>
+                    <div className="item-actions">
+                      <button onClick={() => removeFromCart(item.id)}>-</button>
+                      <span>{item.quantity}</span>
+                      <button onClick={() => addToCart(item)}>+</button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+              <div className="cart-summary">
+                <div className="cart-total" data-testid="cart-total">
+                  Total: ${calculateTotal()}
+                </div>
+                <button
+                  className="checkout-button"
+                  onClick={handleCheckout}
+                  data-testid="checkout-button"
+                >
+                  Proceed to Checkout
+                </button>
+              </div>
+            </>
+          )}
+        </aside>
+      </main>
     </div>
   );
-};
+}
