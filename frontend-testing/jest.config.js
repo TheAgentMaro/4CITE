@@ -5,5 +5,10 @@ module.exports = {
   testEnvironment: "jsdom",
   transformIgnorePatterns: [
     "/node_modules/"
-  ]
+  ],
+  globals: {
+    "babel-jest": {
+      "presets": ["@babel/preset-env", "@babel/preset-react"]
+    }
+  }
 };

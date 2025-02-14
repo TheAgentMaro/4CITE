@@ -1,9 +1,15 @@
 module.exports = {
-    testEnvironment: "jsdom",
     transform: {
       "^.+\\.(js|jsx)$": "babel-jest"
     },
-    moduleFileExtensions: ["js", "jsx"],
-    transformIgnorePatterns: ["/node_modules/"]
+    testEnvironment: "jsdom",
+    transformIgnorePatterns: [
+      "/node_modules/"
+    ],
+    globals: {
+      "babel-jest": {
+        "presets": ["@babel/preset-env", "@babel/preset-react"]
+      }
+    }
   };
   
