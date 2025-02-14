@@ -1,8 +1,8 @@
 import React from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
+import { RegisterPage } from './pages/RegisterPage'
 
 // Pages temporaires pour le test
-const RegisterPage = () => <div data-testid="register-form">Register Page</div>
 const ShopPage = () => <div data-testid="shop-page">Shop Page</div>
 const CheckoutPage = () => <div data-testid="checkout-page">Checkout Page</div>
 
