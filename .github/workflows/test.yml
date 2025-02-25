@@ -70,7 +70,7 @@ jobs:
     - name: Install Cypress dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
+        sudo apt-get install -y libgtk-3-0 libgbm1 libnotify4 libnss3 libxss1 xvfb
       
     - name: Build frontend
       working-directory: ./frontend-testing
@@ -82,7 +82,7 @@ jobs:
         npm run start:test &
         sleep 10
         npx wait-on http://localhost:3001
-        npm run cypress:run
+        xvfb-run --auto-servernum npm run cypress:run
       env:
         CYPRESS_baseUrl: http://localhost:3001
         CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
