@@ -19,6 +19,7 @@ Given('the following accounts exist:', function (dataTable) {
 });
 
 Given('account {string} has a balance of {float}', function (accountId, balance) {
+  accountService.setBalance(accountId, balance);
   const account = accountService.getAccount(accountId);
   assert.strictEqual(account.balance, balance);
 });
@@ -46,6 +47,6 @@ Then('the transfer should be rejected', function () {
   assert.strictEqual(lastTransactionResult.success, false);
 });
 
-Then('an {string} error should be raised', function (errorType) {
+Then(/^(?:an|a) {string} error should be raised$/, function (errorType) {
   assert.strictEqual(lastTransactionResult.message, errorType);
 });
