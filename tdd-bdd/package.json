@@ -1,0 +1,21 @@
+{
+  "name": "banking-tdd-bdd",
+  "version": "1.0.0",
+  "description": "Banking operations with TDD and BDD",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "test:cucumber": "cucumber-js"
+  },
+  "keywords": ["tdd", "bdd", "banking"],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@cucumber/cucumber": "^10.0.1",
+    "jest": "^29.7.0",
+    "@types/jest": "^29.5.11",
+    "typescript": "^5.3.3",
+    "ts-jest": "^29.1.1",
+    "@types/node": "^20.10.5"
+  }
+}
