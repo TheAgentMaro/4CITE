@@ -1,6 +1,6 @@
 const { Given, When, Then } = require('@cucumber/cucumber');
 const assert = require('assert');
-const { AccountService } = require('../../dist/services/AccountService');
+const { AccountService } = require('../../src/services/AccountService');
 
 let accountService;
 let lastTransactionResult;
@@ -20,7 +20,7 @@ Given('the following accounts exist:', function (dataTable) {
 
 Given('account {string} has a balance of {float}', function (accountId, balance) {
   const account = accountService.getAccount(accountId);
-  assert.equal(account.balance, balance);
+  assert.strictEqual(account.balance, balance);
 });
 
 When('I transfer {float} from account {string} to account {string}', function (amount, sourceId, targetId) {
@@ -33,19 +33,19 @@ When('I try to transfer {float} from account {string} to account {string}', func
 
 Then('account {string} should have a balance of {float}', function (accountId, expectedBalance) {
   const account = accountService.getAccount(accountId);
-  assert.equal(account.balance, expectedBalance);
+  assert.strictEqual(account.balance, expectedBalance);
 });
 
 Then('the transfer should be recorded in the transaction history', function () {
   const transactions = accountService.getTransactionHistory();
   const lastTransaction = transactions[transactions.length - 1];
-  assert.equal(lastTransaction.status, 'SUCCESS');
+  assert.strictEqual(lastTransaction.status, 'SUCCESS');
 });
 
 Then('the transfer should be rejected', function () {
-  assert.equal(lastTransactionResult.success, false);
+  assert.strictEqual(lastTransactionResult.success, false);
 });
 
 Then('an {string} error should be raised', function (errorType) {
-  assert.equal(lastTransactionResult.message, errorType);
+  assert.strictEqual(lastTransactionResult.message, errorType);
 });
