@@ -39,7 +39,7 @@ export class LoanService {
     // Calculate interest rate based on credit score
     const interestRate = this.calculateInterestRate(customer.creditScore);
     const monthlyPayment = this.calculateMonthlyPayment(request.amount, interestRate, request.termMonths);
-    const totalInterest = (monthlyPayment * request.termMonths) - request.amount;
+    const totalInterest = this.round((monthlyPayment * request.termMonths) - request.amount);
 
     const loanDetails: LoanDetails = {
       approved: true,
@@ -64,7 +64,7 @@ export class LoanService {
 
   public calculateLoanDetails(amount: number, interestRate: number, termMonths: number): LoanDetails {
     const monthlyPayment = this.calculateMonthlyPayment(amount, interestRate, termMonths);
-    const totalInterest = (monthlyPayment * termMonths) - amount;
+    const totalInterest = this.round((monthlyPayment * termMonths) - amount);
 
     return {
       approved: true,
@@ -85,7 +85,11 @@ export class LoanService {
     const monthlyRate = (annualRate / 100) / 12;
     const payment = (principal * monthlyRate * Math.pow(1 + monthlyRate, termMonths)) / 
                    (Math.pow(1 + monthlyRate, termMonths) - 1);
-    return Number(payment.toFixed(2));
+    return this.round(payment);
+  }
+
+  private round(value: number): number {
+    return Number(value.toFixed(2));
   }
 
   public getCustomer(customerId: string): Customer | undefined {

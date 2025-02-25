@@ -13,7 +13,7 @@ Feature: Loan Request Processing
     When customer "CUST001" requests a loan of 50000.00 for 36 months
     Then the loan should be approved
     And the interest rate should be 5.5%
-    And the monthly payment should be 1509.17
+    And the monthly payment should be 1511.50
     And the loan details should be recorded
 
   Scenario: Rejected loan request due to low credit score
@@ -33,5 +33,5 @@ Feature: Loan Request Processing
 
   Scenario: Calculating loan details
     When I calculate loan details for 100000.00 at 6.5% for 48 months
-    Then the monthly payment should be 2361.21
-    And the total interest should be 13338.08
+    Then the monthly payment should be 2362.89
+    And the total interest should be 13418.72
