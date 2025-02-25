@@ -1,8 +1,8 @@
 module.exports = {
   default: {
+    paths: ['features/**/*.feature'],
+    import: ['features/step_definitions/**/*.ts'],
     requireModule: ['ts-node/register'],
-    require: ['features/step_definitions/*.ts'],
-    format: ['progress-bar', 'html:cucumber-report.html'],
-    publishQuiet: true
+    format: ['progress-bar', 'html:cucumber-report.html']
   }
 };
