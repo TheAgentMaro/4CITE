@@ -1,0 +1,6 @@
+node_modules/
+dist/
+coverage/
+*.log
+cucumber-report.html
+.DS_Store
