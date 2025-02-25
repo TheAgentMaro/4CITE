@@ -26,8 +26,8 @@ export class LoanService {
       return { approved: false, rejectionReason: 'invalid loan term' };
     }
 
-    // Validate loan amount (maximum 10x annual income)
-    if (request.amount > customer.annualIncome * 10) {
+    // Validate loan amount (maximum 8x annual income)
+    if (request.amount > customer.annualIncome * 8) {
       return { approved: false, rejectionReason: 'loan amount too high' };
     }
 
@@ -83,13 +83,16 @@ export class LoanService {
 
   private calculateMonthlyPayment(principal: number, annualRate: number, termMonths: number): number {
     const monthlyRate = (annualRate / 100) / 12;
-    const payment = (principal * monthlyRate * Math.pow(1 + monthlyRate, termMonths)) / 
-                   (Math.pow(1 + monthlyRate, termMonths) - 1);
-    return this.round(payment);
+    const numerator = principal * monthlyRate;
+    const denominator = 1 - Math.pow(1 + monthlyRate, -termMonths);
+    const payment = numerator / denominator;
+    
+    // Arrondir à 2 décimales
+    return Math.round(payment * 100) / 100;
   }
 
   private round(value: number): number {
-    return Number(value.toFixed(2));
+    return Math.round(value * 100) / 100;
   }
 
   public getCustomer(customerId: string): Customer | undefined {
