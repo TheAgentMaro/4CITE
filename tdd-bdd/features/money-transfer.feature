@@ -5,12 +5,11 @@ Feature: Money Transfer Between Accounts
 
   Background:
     Given the following accounts exist:
-      | accountId | owner        | balance |
-      | ACC001   | John Doe     | 1000.00 |
-      | ACC002   | Jane Smith   | 500.00  |
+      | accountId | owner      | balance |
+      | ACC001   | John Doe   | 1000.00 |
+      | ACC002   | Jane Smith | 500.00  |
 
   Scenario: Successful money transfer between accounts
-    Given account "ACC001" has a balance of 1000.00
     When I transfer 500.00 from account "ACC001" to account "ACC002"
     Then account "ACC001" should have a balance of 500.00
     And account "ACC002" should have a balance of 1000.00
