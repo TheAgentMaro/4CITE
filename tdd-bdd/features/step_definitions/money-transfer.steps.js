@@ -1,6 +1,6 @@
 const { Given, When, Then } = require('@cucumber/cucumber');
 const assert = require('assert');
-const { AccountService } = require('../../src/services/AccountService');
+const { AccountService } = require('../../dist/services/AccountService');
 
 let accountService;
 let lastTransactionResult;

@@ -32,6 +32,16 @@ export class AccountService {
     return { ...account };
   }
 
+  public setBalance(accountId: string, newBalance: number): Account {
+    const account = this.accounts.get(accountId);
+    if (!account) {
+      throw new Error('Account not found');
+    }
+    account.balance = newBalance;
+    this.accounts.set(accountId, account);
+    return { ...account };
+  }
+
   public transferMoney(
     sourceAccountId: string,
     targetAccountId: string,
