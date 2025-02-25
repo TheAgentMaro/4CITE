@@ -83,8 +83,8 @@ export class LoanService {
 
   private calculateMonthlyPayment(principal: number, annualRate: number, termMonths: number): number {
     const monthlyRate = (annualRate / 100) / 12;
-    const numerator = principal * monthlyRate;
-    const denominator = 1 - Math.pow(1 + monthlyRate, -termMonths);
+    const numerator = principal * monthlyRate * Math.pow(1 + monthlyRate, termMonths);
+    const denominator = Math.pow(1 + monthlyRate, termMonths) - 1;
     const payment = numerator / denominator;
     
     // Arrondir à 2 décimales
