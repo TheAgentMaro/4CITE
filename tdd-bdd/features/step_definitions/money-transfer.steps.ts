@@ -69,7 +69,7 @@ Then('the transfer should be rejected', function () {
   assert.strictEqual(lastTransactionResult.success, false);
 });
 
-Then(/^(?:an?|the) {string} error should be raised$/, function (errorType: string) {
+Then('the {string} error should be raised', function (errorType: string) {
   console.log(`Checking error message. Expected: ${errorType}, Actual: ${lastTransactionResult.message}`);
   assert.strictEqual(lastTransactionResult.message, errorType);
 });

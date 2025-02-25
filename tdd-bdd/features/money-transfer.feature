@@ -21,19 +21,19 @@ Feature: Money Transfer Between Accounts
     Then the transfer should be rejected
     And account "ACC001" should have a balance of 100.00
     And account "ACC002" should have a balance of 500.00
-    And an "insufficient funds" error should be raised
+    And the "insufficient funds" error should be raised
 
   Scenario: Transfer with invalid account number
     When I try to transfer 100.00 from account "INVALID" to account "ACC002"
     Then the transfer should be rejected
-    And an "invalid account" error should be raised
+    And the "invalid account" error should be raised
 
   Scenario: Transfer with negative amount
     When I try to transfer -100.00 from account "ACC001" to account "ACC002"
     Then the transfer should be rejected
-    And an "invalid amount" error should be raised
+    And the "invalid amount" error should be raised
 
   Scenario: Transfer to same account
     When I try to transfer 100.00 from account "ACC001" to account "ACC001"
     Then the transfer should be rejected
-    And a "same account transfer" error should be raised
+    And the "same account transfer" error should be raised
